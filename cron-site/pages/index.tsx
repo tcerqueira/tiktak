@@ -13,7 +13,7 @@ const Home: NextPage = () => {
       </Head>
 
       <Header />
-      <main className='min-h-screen pt-16 px-1'>
+      <main className='min-h-screen pt-16 px-1 max-w-[1080px] mx-auto'>
         <CronPoster />
         Hello world!
       </main>
