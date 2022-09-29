@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import CronPoster from '../components/CronPoster'
 import Header from '../components/Header'
+import JobList from '../components/JobList'
 
 const Home: NextPage = () => {
   return (
@@ -15,7 +16,7 @@ const Home: NextPage = () => {
       <Header />
       <main className='min-h-screen pt-16 px-1 max-w-[1080px] mx-auto'>
         <CronPoster />
-        Hello world!
+        <JobList />
       </main>
     </div>
   )
