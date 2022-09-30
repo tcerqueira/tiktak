@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import TimezoneSelect from 'react-timezone-select'
+import TimezoneSelect, { ITimezone } from 'react-timezone-select'
 import { ClockIcon } from '@heroicons/react/solid'
 
 function CronPoster() {
-	const [selectedTimezone, setSelectedTimezone] = useState<any>(Intl.DateTimeFormat().resolvedOptions().timeZone);
+	const [selectedTimezone, setSelectedTimezone] = useState<ITimezone>(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 	return (
 		<div className='p-2 rounded-md border-2 border-orange-500'>
@@ -29,10 +29,10 @@ function CronPoster() {
 				</div>
 				<div className='input-container'>
 					<label htmlFor='timezone-in'>Timezone</label>
-					<TimezoneSelect value={selectedTimezone} onChange={selectedTimezone} />
+					<TimezoneSelect value={selectedTimezone} onChange={setSelectedTimezone} />
 				</div>
 				<div className='flex justify-center items-center md:w-[60%] w-[100%] rounded-lg self-center cursor-pointer hover:backdrop-brightness-90'
-				onClick={() => console.log('yo')}>
+				onClick={() => console.log('submitted')}>
 					<ClockIcon className='h-10 w-10 text-orange-600' />
 					<button type='submit' hidden />
 				</div>

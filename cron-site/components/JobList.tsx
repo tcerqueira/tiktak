@@ -8,23 +8,25 @@ const mock: CronJob = {
   webhook_method: 'POST',
   body: 'ITS TIME MF',
   expression: '* * * * *',
-  timezone: 'WEST'
+  timezone: 'Europe/Lisbon'
 };
+
+const mockList: CronJob[] = [
+  {...mock}, {...mock}, {...mock}
+]
 
 function JobList() {
   return (
     <div>
         <h1>List</h1>
         <ul>
-            <li>
-              <JobItem cronJob={mock} />
-            </li>
-            <li>
-              <JobItem cronJob={mock} />
-            </li>
-            <li>
-              <JobItem cronJob={mock} />
-            </li>
+          {mockList.map((item) => {
+            return (
+              <li key={item.id}>
+                <JobItem cronJob={item} />
+              </li>
+            )
+          })}
         </ul>
     </div>
   )
