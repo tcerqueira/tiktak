@@ -14,7 +14,7 @@ const Home: NextPage = () => {
       </Head>
 
       <Header />
-      <main className='min-h-screen pt-16 px-1 max-w-[1080px] mx-auto'>
+      <main className='min-h-screen pt-16 px-1 max-w-[768px] mx-auto'>
         <CronPoster />
         <JobList />
       </main>
