@@ -29,7 +29,11 @@ function CronPoster() {
 				</div>
 				<div className='input-container'>
 					<label htmlFor='timezone-in'>Timezone</label>
-					<TimezoneSelect value={selectedTimezone} onChange={setSelectedTimezone} />
+					<TimezoneSelect value={selectedTimezone} onChange={(tz) => {
+							setSelectedTimezone(tz);
+							console.log(tz);
+						}}
+					/>
 				</div>
 				<div className='flex justify-center items-center md:w-[60%] w-[100%] rounded-lg self-center cursor-pointer hover:backdrop-brightness-90'
 				onClick={() => console.log('submitted')}>

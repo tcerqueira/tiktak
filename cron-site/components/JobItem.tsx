@@ -16,8 +16,8 @@ function JobItem({ cronJob }: JobItemProps) {
 		<div className='my-2 px-2 rounded-lg border-b-2 border-t-2 border-orange-500 '>
 			<div className='flex items-center justify-between'>
 				<div>
-					<p>Body</p>
-					<p>Webhook url</p>
+					<p>{cronJob.body}</p>
+					<p>{cronJob.webhook_url}</p>
 				</div>
 				<div className='flex items-center space-x-5'>
 					<div className='cronjob__item--div' onClick={() => setEditOpen(!editOpen)}>
@@ -35,11 +35,11 @@ function JobItem({ cronJob }: JobItemProps) {
 				<form className='p-1'>
 					<div className='input-container'>
 						<label htmlFor='body-in'>Body</label>
-						<textarea id="body-in" cols={30} rows={4} defaultValue='Your time is up!' />
+						<textarea id="body-in" cols={30} rows={4} defaultValue={cronJob.body} />
 					</div>
 					<div className='input-container'>
 						<label htmlFor='schedule-in'>Schedule</label>
-						<input id='schedule-in' type='text' placeholder='* * * * *' />
+						<input id='schedule-in' value={cronJob.expression} type='text' placeholder='* * * * *' />
 					</div>
 					<div className='input-container'>
 						<label htmlFor='timezone-in'>Timezone</label>
