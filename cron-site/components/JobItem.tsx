@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CronJob } from '../types/Types';
+import { CronJob } from '../types/CronJob';
 import { ClockIcon, PencilIcon } from '@heroicons/react/solid';
 import { TrashIcon } from '@heroicons/react/solid';
 import TimezoneSelect, { ITimezone } from 'react-timezone-select';

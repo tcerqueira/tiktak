@@ -1,5 +1,5 @@
 import React from 'react'
-import { CronJob } from '../types/Types'
+import { CronJob } from '../types/CronJob'
 import JobItem from './JobItem'
 
 const mock: CronJob = {
