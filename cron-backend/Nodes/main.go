@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"os"
 
+	handlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	handlers "github.com/tcerqueira/tiktak/cron-backend/Nodes/Handlers"
+	h "github.com/tcerqueira/tiktak/cron-backend/Nodes/Handlers"
 )
 
 var (
@@ -24,18 +25,21 @@ func init() {
 
 func main() {
 	router := mux.NewRouter()
+	credentials := handlers.AllowCredentials()
+	methods := handlers.AllowedMethods([]string{"*"})
+	origins := handlers.AllowedOrigins([]string{"*"})
 	// List all crons
-	router.HandleFunc("/cron", handlers.HandleGetJobsList).Methods("GET")
+	router.HandleFunc("/cron", h.HandleGetJobsList).Methods("GET")
 	// Fetch cron with id
-	router.HandleFunc("/cron/{id}", handlers.HandleGetJob).Methods("GET")
+	router.HandleFunc("/cron/{id}", h.HandleGetJob).Methods("GET")
 	// Create cron
-	router.HandleFunc("/cron", handlers.HandleCreateJob).Methods("POST")
+	router.HandleFunc("/cron", h.HandleCreateJob).Methods("POST")
 	// Update cron
-	router.HandleFunc("/cron/{id}", handlers.HandleUpdateJob).Methods("PUT")
+	router.HandleFunc("/cron/{id}", h.HandleUpdateJob).Methods("PUT")
 	// Delete cron
-	router.HandleFunc("/cron/{id}", handlers.HandleDeleteJob).Methods("DELETE")
+	router.HandleFunc("/cron/{id}", h.HandleDeleteJob).Methods("DELETE")
 
 	// Start server
 	fmt.Println("Starting server...")
-	log.Fatal(http.ListenAndServe(":"+sv_port, router))
+	log.Fatal(http.ListenAndServe(":"+sv_port, handlers.CORS(credentials, methods, origins)(router)))
 }
