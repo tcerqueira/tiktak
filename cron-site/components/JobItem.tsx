@@ -39,7 +39,7 @@ function JobItem({ cronJob }: JobItemProps) {
 					</div>
 					<div className='input-container'>
 						<label htmlFor='schedule-in'>Schedule</label>
-						<input id='schedule-in' value={cronJob.expression} type='text' placeholder='* * * * *' />
+						<input id='schedule-in' defaultValue={cronJob.expression} type='text' placeholder='* * * * *' />
 					</div>
 					<div className='input-container'>
 						<label htmlFor='timezone-in'>Timezone</label>

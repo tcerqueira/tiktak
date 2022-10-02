@@ -1,5 +1,5 @@
 export type CronJob= {
-    id: string,
+    id: number,
     webhook_url: string,
     webhook_method: string,
     body: string,
