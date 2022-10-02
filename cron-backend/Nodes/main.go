@@ -24,15 +24,15 @@ func init() {
 
 func main() {
 	router := mux.NewRouter()
-	// List all jobs
+	// List all crons
 	router.HandleFunc("/cron", handlers.HandleGetJobsList).Methods("GET")
-	// Fetch job with id
+	// Fetch cron with id
 	router.HandleFunc("/cron/{id}", handlers.HandleGetJob).Methods("GET")
-	// Create job
+	// Create cron
 	router.HandleFunc("/cron", handlers.HandleCreateJob).Methods("POST")
-	// Update job
+	// Update cron
 	router.HandleFunc("/cron/{id}", handlers.HandleUpdateJob).Methods("PUT")
-	// Delete job
+	// Delete cron
 	router.HandleFunc("/cron/{id}", handlers.HandleDeleteJob).Methods("DELETE")
 
 	// Start server
