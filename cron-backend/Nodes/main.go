@@ -39,6 +39,9 @@ func main() {
 	// Delete cron
 	router.HandleFunc("/cron/{id}", h.HandleDeleteJob).Methods("DELETE")
 
+	// Migrate cron jobs already in DB
+	// cronjob.Migrate([]Jobs{})
+
 	// Start server
 	fmt.Println("Starting server...")
 	log.Fatal(http.ListenAndServe(":"+sv_port, handlers.CORS(credentials, methods, origins)(router)))

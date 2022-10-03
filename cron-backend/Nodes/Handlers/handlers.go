@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	cronjob "github.com/tcerqueira/tiktak/cron-backend/Nodes/Cron"
 	database "github.com/tcerqueira/tiktak/cron-backend/Nodes/Database"
 )
 
@@ -15,7 +16,7 @@ type ResponsePayload struct {
 }
 
 func HandleGetJobsList(res http.ResponseWriter, req *http.Request) {
-	jobs := []database.Job{}
+	jobs := []cronjob.Job{}
 	result := database.FetchAllJobs(&jobs)
 
 	writeResponse(res, jobs, result.Error)
@@ -28,7 +29,7 @@ func HandleGetJob(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	job := database.Job{ID: database.JobID(id)}
+	job := cronjob.Job{ID: cronjob.JobID(id)}
 	result := database.FetchJob(&job)
 	if job.ID == 0 {
 		writeResponse(res, nil, result.Error)
@@ -38,27 +39,29 @@ func HandleGetJob(res http.ResponseWriter, req *http.Request) {
 }
 
 func HandleCreateJob(res http.ResponseWriter, req *http.Request) {
-	var job database.Job
+	var job cronjob.Job
 	err := json.NewDecoder(req.Body).Decode(&job)
 	if ok := handlePayloadError(res, err); !ok {
 		return
 	}
 
-	// Do scheduled task
-
 	result := database.InsertJob(&job)
+	// Schedule task
+	cj := cronjob.CronJob{Job: &job}
+	cj.Start()
+
 	writeResponse(res, job, result.Error)
 }
 
 func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
-	var targetJob, updateJob database.Job
+	var targetJob, updateJob cronjob.Job
 
 	params := mux.Vars(req)
 	id, err := strconv.Atoi(params["id"])
 	if ok := handleParamsError(res, err, id); !ok {
 		return
 	}
-	targetJob = database.Job{ID: database.JobID(id)}
+	targetJob = cronjob.Job{ID: cronjob.JobID(id)}
 
 	err = json.NewDecoder(req.Body).Decode(&updateJob)
 	if ok := handlePayloadError(res, err); !ok {
@@ -66,6 +69,7 @@ func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
 	}
 
 	// Update scheduled task
+	// cron.
 
 	result := database.UpdateJob(&targetJob, &updateJob)
 	if targetJob.ID == 0 {
@@ -84,7 +88,7 @@ func HandleDeleteJob(res http.ResponseWriter, req *http.Request) {
 
 	// Delete scheduled task
 
-	result := database.DeleteJob(database.JobID(id))
+	result := database.DeleteJob(cronjob.JobID(id))
 	writeResponse(res, nil, result.Error)
 }
 

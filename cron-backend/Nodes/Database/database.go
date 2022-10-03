@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	cronjob "github.com/tcerqueira/tiktak/cron-backend/Nodes/Cron"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -35,19 +36,19 @@ func init() {
 		log.Fatal(err)
 	}
 
-	conn.AutoMigrate(&Job{})
+	conn.AutoMigrate(&cronjob.Job{})
 	GetConnection = func() *gorm.DB {
 		return conn
 	}
 	fmt.Println("DB connected")
 }
 
-func FetchAllJobs(rows *[]Job) *gorm.DB {
+func FetchAllJobs(rows *[]cronjob.Job) *gorm.DB {
 	db := GetConnection()
 	return db.Find(&rows)
 }
 
-func FetchJob(job *Job) *gorm.DB {
+func FetchJob(job *cronjob.Job) *gorm.DB {
 	db := GetConnection()
 	result := db.Find(job)
 	if result.RowsAffected == 0 {
@@ -56,12 +57,12 @@ func FetchJob(job *Job) *gorm.DB {
 	return result
 }
 
-func InsertJob(job *Job) *gorm.DB {
+func InsertJob(job *cronjob.Job) *gorm.DB {
 	db := GetConnection()
 	return db.Create(&job)
 }
 
-func UpdateJob(target, job *Job) *gorm.DB {
+func UpdateJob(target, job *cronjob.Job) *gorm.DB {
 	db := GetConnection()
 	result := db.Model(target).Clauses(clause.Returning{}).Updates(job)
 	if result.RowsAffected == 0 {
@@ -70,7 +71,7 @@ func UpdateJob(target, job *Job) *gorm.DB {
 	return result
 }
 
-func DeleteJob(id JobID) *gorm.DB {
+func DeleteJob(id cronjob.JobID) *gorm.DB {
 	db := GetConnection()
-	return db.Delete(&Job{}, id)
+	return db.Delete(&cronjob.Job{}, id)
 }

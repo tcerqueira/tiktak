@@ -1,4 +1,4 @@
-package database
+package cronjob
 
 import (
 	"bytes"
@@ -18,7 +18,8 @@ type Job struct {
 	Timezone       string `json:"timezone"`
 }
 
-func (j *Job) trigger() error {
+func (j *Job) Trigger() {
+	// fmt.Printf("%s - %d - %v\n", time.Now().Format(time.RubyDate), j.ID, j)
 	client := http.DefaultClient
 	var (
 		url        string
@@ -38,14 +39,16 @@ func (j *Job) trigger() error {
 
 	req, err := http.NewRequest(j.WebhookMethod, url, bodyReader)
 	if err != nil {
-		return err
+		fmt.Println("error 'Trigger': Creating request: ", err.Error(), *j)
+		return
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	_, err = client.Do(req)
 	if err != nil {
-		return err
+		fmt.Println("error 'Trigger': Sending request: ", err.Error(), *j)
+		return
 	}
 
-	return nil
+	return
 }
