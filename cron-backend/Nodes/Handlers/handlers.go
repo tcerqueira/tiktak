@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	cronjob "github.com/tcerqueira/tiktak/cron-backend/Nodes/Cron"
 	database "github.com/tcerqueira/tiktak/cron-backend/Nodes/Database"
+	logger "github.com/tcerqueira/tiktak/cron-backend/Nodes/Logger"
 )
 
 type ResponsePayload struct {
@@ -16,6 +17,7 @@ type ResponsePayload struct {
 }
 
 func HandleGetJobsList(res http.ResponseWriter, req *http.Request) {
+	logger.Info.Println("Request - jobs list")
 	jobs := []cronjob.Job{}
 	result := database.FetchAllJobs(&jobs)
 
@@ -28,6 +30,7 @@ func HandleGetJob(res http.ResponseWriter, req *http.Request) {
 	if ok := handleParamsError(res, err, id); !ok {
 		return
 	}
+	logger.Info.Printf("Request - jobs by id (%d)\n", id)
 
 	job := cronjob.Job{ID: cronjob.JobID(id)}
 	result := database.FetchJob(&job)
@@ -44,6 +47,7 @@ func HandleCreateJob(res http.ResponseWriter, req *http.Request) {
 	if ok := handlePayloadError(res, err); !ok {
 		return
 	}
+	logger.Info.Printf("Request - create job (%v)\n", job)
 
 	result := database.InsertJob(&job)
 	// Schedule task
@@ -61,6 +65,7 @@ func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
 	if ok := handleParamsError(res, err, id); !ok {
 		return
 	}
+	logger.Info.Printf("Request - update job (%d)\n", id)
 	targetJob = cronjob.Job{ID: cronjob.JobID(id)}
 
 	err = json.NewDecoder(req.Body).Decode(&updateJob)
@@ -85,6 +90,7 @@ func HandleDeleteJob(res http.ResponseWriter, req *http.Request) {
 	if ok := handleParamsError(res, err, id); !ok {
 		return
 	}
+	logger.Info.Printf("Request - delete job (%d)\n", id)
 
 	// Delete scheduled task
 

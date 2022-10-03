@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	logger "github.com/tcerqueira/tiktak/cron-backend/Nodes/Logger"
 )
 
 type JobID int
@@ -39,14 +41,14 @@ func (j *Job) Trigger() {
 
 	req, err := http.NewRequest(j.WebhookMethod, url, bodyReader)
 	if err != nil {
-		fmt.Println("error 'Trigger': Creating request: ", err.Error(), *j)
+		logger.Warn.Println("error 'Trigger': Creating request: ", err.Error(), *j)
 		return
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	_, err = client.Do(req)
 	if err != nil {
-		fmt.Println("error 'Trigger': Sending request: ", err.Error(), *j)
+		logger.Warn.Println("error 'Trigger': Sending request: ", err.Error(), *j)
 		return
 	}
 

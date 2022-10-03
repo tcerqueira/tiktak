@@ -3,6 +3,7 @@ package cronjob
 import (
 	"fmt"
 
+	logger "github.com/tcerqueira/tiktak/cron-backend/Nodes/Logger"
 	cron "gopkg.in/robfig/cron.v2"
 )
 
@@ -33,7 +34,7 @@ func (cj *CronJob) Start() {
 		job.Trigger()
 	})
 	if err != nil {
-		fmt.Println("error 'Start': Adding Job: ", err.Error(), *job)
+		logger.Error.Println("error 'Start': Adding Job: ", err.Error(), *job)
 		return
 	}
 

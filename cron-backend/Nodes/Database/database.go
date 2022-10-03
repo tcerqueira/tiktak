@@ -7,6 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	cronjob "github.com/tcerqueira/tiktak/cron-backend/Nodes/Cron"
+	logger "github.com/tcerqueira/tiktak/cron-backend/Nodes/Logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -33,14 +34,14 @@ func init() {
 		PreferSimpleProtocol: true,
 	}), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		logger.Error.Fatalln("Could not connect to database")
 	}
 
 	conn.AutoMigrate(&cronjob.Job{})
 	GetConnection = func() *gorm.DB {
 		return conn
 	}
-	fmt.Println("DB connected")
+	logger.Info.Println("Connected to database")
 }
 
 func FetchAllJobs(rows *[]cronjob.Job) *gorm.DB {

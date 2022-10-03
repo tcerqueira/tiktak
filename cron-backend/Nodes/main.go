@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +8,7 @@ import (
 	handlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	h "github.com/tcerqueira/tiktak/cron-backend/Nodes/Handlers"
+	logger "github.com/tcerqueira/tiktak/cron-backend/Nodes/Logger"
 )
 
 var (
@@ -43,6 +43,6 @@ func main() {
 	// cronjob.Migrate([]Jobs{})
 
 	// Start server
-	fmt.Println("Starting server...")
+	logger.Info.Println("Starting server...")
 	log.Fatal(http.ListenAndServe(":"+sv_port, handlers.CORS(credentials, methods, origins)(router)))
 }
