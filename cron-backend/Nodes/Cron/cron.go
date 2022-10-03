@@ -15,7 +15,7 @@ type CronJobID cron.EntryID
 type CronJob struct {
 	Job     *Job
 	EntryID cron.EntryID
-	started bool
+	running bool
 }
 
 func init() {
@@ -23,7 +23,7 @@ func init() {
 }
 
 func (cj *CronJob) Start() {
-	if cj.started {
+	if cj.running {
 		return
 	}
 	job := cj.Job
@@ -38,7 +38,7 @@ func (cj *CronJob) Start() {
 		return
 	}
 
-	cj.started = true
+	cj.running = true
 	cronJobsMap[job.ID] = cj
 	// for key, el := range cronJobsMap {
 	// 	fmt.Printf("%d => {%v, %d}\n", int(key), el.Job, int(el.EntryID))
