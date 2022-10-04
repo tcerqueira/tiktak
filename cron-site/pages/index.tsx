@@ -1,9 +1,8 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
-import CronPoster from '../components/CronPoster'
+import CronPoster from '../components/index/CronPoster'
 import Header from '../components/Header'
-import JobList from '../components/JobList'
+import JobList from '../components/index/JobList'
 
 const Home: NextPage = () => {
   return (
