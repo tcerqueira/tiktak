@@ -9,10 +9,10 @@ import (
 	logger "github.com/tcerqueira/tiktak/cron-backend/Nodes/Logger"
 )
 
-type JobID int
+type JobID string
 
 type Job struct {
-	ID             JobID  `json:"id"`
+	ID             JobID  `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	WebhookURL     string `json:"webhook_url"`
 	WebhookMethod  string `json:"webhook_method"`
 	Body           string `json:"body"`

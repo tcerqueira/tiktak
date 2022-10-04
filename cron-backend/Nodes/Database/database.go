@@ -53,7 +53,7 @@ func FetchJob(job *cronjob.Job) *gorm.DB {
 	db := GetConnection()
 	result := db.Find(job)
 	if result.RowsAffected == 0 {
-		job.ID = 0
+		job.ID = ""
 	}
 	return result
 }
@@ -67,7 +67,7 @@ func UpdateJob(target, job *cronjob.Job) *gorm.DB {
 	db := GetConnection()
 	result := db.Model(target).Clauses(clause.Returning{}).Updates(job)
 	if result.RowsAffected == 0 {
-		target.ID = 0
+		target.ID = ""
 	}
 	return result
 }

@@ -34,7 +34,7 @@ func HandleGetJob(res http.ResponseWriter, req *http.Request) {
 
 	job := cronjob.Job{ID: cronjob.JobID(id)}
 	result := database.FetchJob(&job)
-	if job.ID == 0 {
+	if job.ID == "" {
 		writeResponse(res, nil, result.Error)
 		return
 	}
@@ -77,7 +77,7 @@ func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
 	// cron.
 
 	result := database.UpdateJob(&targetJob, &updateJob)
-	if targetJob.ID == 0 {
+	if targetJob.ID == "" {
 		writeResponse(res, nil, result.Error)
 		return
 	}

@@ -43,6 +43,6 @@ func main() {
 	// cronjob.Migrate([]Jobs{})
 
 	// Start server
-	logger.Info.Println("Starting server...")
+	logger.Info.Printf("Starting server. Listening on PORT %s\n", sv_port)
 	log.Fatal(http.ListenAndServe(":"+sv_port, handlers.CORS(credentials, methods, origins)(router)))
 }
