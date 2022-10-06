@@ -6,9 +6,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	cronjob "github.com/tcerqueira/tiktak/cron-backend/api/cron"
-	database "github.com/tcerqueira/tiktak/cron-backend/api/database"
-	logger "github.com/tcerqueira/tiktak/cron-backend/api/logger"
+	cronjob "github.com/tcerqueira/tiktak/cron-backend/internal/cron"
+	database "github.com/tcerqueira/tiktak/cron-backend/internal/database"
+	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
 )
 
 type ResponsePayload struct {

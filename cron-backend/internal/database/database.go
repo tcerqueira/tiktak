@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	cronjob "github.com/tcerqueira/tiktak/cron-backend/api/cron"
-	logger "github.com/tcerqueira/tiktak/cron-backend/api/logger"
+	cronjob "github.com/tcerqueira/tiktak/cron-backend/internal/cron"
+	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"

@@ -10,6 +10,8 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
+	"gorm.io/gorm/logger"
 )
 
 var (
@@ -34,7 +36,7 @@ func main() {
 	router.HandleFunc("/webhook", handleOthers).Methods("POST", "PUT", "PATCH", "DELETE")
 
 	// Start server
-	fmt.Println("Starting server...")
+	logger.Info.Println("Starting server...")
 	log.Fatal(http.ListenAndServe(":"+sv_port, handlers.CORS(credentials, methods, origins)(router)))
 }
 

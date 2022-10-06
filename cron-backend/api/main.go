@@ -1,16 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/google/uuid"
 	handlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	h "github.com/tcerqueira/tiktak/cron-backend/api/handlers"
-	logger "github.com/tcerqueira/tiktak/cron-backend/api/logger"
+	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
 )
 
 var (
@@ -43,11 +41,6 @@ func main() {
 
 	// Migrate cron jobs already in DB
 	// cronjob.Migrate([]Jobs{})
-	id, err := uuid.Parse("00000000-0000-0000-0000-000000000000")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	fmt.Println(id)
 
 	// Start server
 	logger.Info.Printf("Starting server. Listening on PORT %s\n", sv_port)

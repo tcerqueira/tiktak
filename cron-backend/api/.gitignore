@@ -1,5 +1,2 @@
 # local env files
 .env*.local
-
-# Output
-Nodes
