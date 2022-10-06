@@ -15,6 +15,7 @@ type CronWorker struct {
 	AlivePing bool
 	UpdatedAt time.Time
 	WorkCount int
+	Ready     bool
 }
 
 func (cw *CronWorker) KeepAlive() {

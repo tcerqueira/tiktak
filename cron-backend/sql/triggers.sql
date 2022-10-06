@@ -7,9 +7,10 @@ DECLARE
 BEGIN
     -- Choose insert cron job and assign worker to dispatch
     INSERT INTO cron_jobs(job_id, worker_id) VALUES (NEW.id,
-        (SELECT id FROM cron_workers WHERE now() - updated_at < '2 second'::interval ORDER BY work_count ASC LIMIT 1)
+        (SELECT id FROM cron_workers WHERE now() - updated_at < '2 second'::interval AND ready=true ORDER BY work_count ASC LIMIT 1)
     ) RETURNING worker_id INTO w_id;
     -- Notify worker
+	-- RAISE EXCEPTION 'worker_id (%)', CONCAT('create_', w_id::text);
 	PERFORM pg_notify(CONCAT('create_', w_id::text), NEW.id::text);
 	RETURN NEW;
 END;

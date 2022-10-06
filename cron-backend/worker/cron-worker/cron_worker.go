@@ -1,39 +1,96 @@
-package cronwk
+package cronsv
 
 import (
+	"database/sql"
 	"sync"
 	"time"
 
+	pq "github.com/lib/pq"
 	database "github.com/tcerqueira/tiktak/cron-backend/internal/database"
+	"github.com/tcerqueira/tiktak/cron-backend/internal/logger"
 	model "github.com/tcerqueira/tiktak/cron-backend/internal/model"
 	cron "gopkg.in/robfig/cron.v2"
 )
 
-func init() {
-	scheduler.Start()
+type CronServer struct {
+	cronWorker     model.CronWorker
+	scheduler      *cron.Cron
+	cronJobsMap    map[string]*model.CronJob
+	createListener *pq.Listener
+	deleteListener *pq.Listener
 }
 
-var scheduler = cron.New()
-var cronJobsMap = make(map[string]*model.CronJob)
+func NewServer() *CronServer {
+	var cs CronServer
+	cs.cronWorker = model.CronWorker{}
+	cs.scheduler = cron.New()
+	cs.cronJobsMap = make(map[string]*model.CronJob)
 
-func Init(cw *model.CronWorker) {
-	db := database.GetConnection()
+	result := database.GetConnection().Create(&cs.cronWorker)
+	if result.Error != nil {
+		panic(result.Error.Error())
+	}
 
-	// db.AutoMigrate(cw)
-	db.Create(cw)
+	_, err := sql.Open("postgres", database.GetDSN())
+	if err != nil {
+		panic(err)
+	}
+
+	return &cs
 }
 
-func Start(cw *model.CronWorker) {
+func (cs *CronServer) Start() {
+	var err error
+	cs.createListener, err = registerListener("create_" + cs.cronWorker.ID)
+	if err != nil {
+		panic(err.Error())
+	}
+	cs.deleteListener, err = registerListener("delete_" + cs.cronWorker.ID)
+	if err != nil {
+		panic(err.Error())
+	}
+
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		for {
-			cw.KeepAlive()
-			time.Sleep(1 * time.Second)
-		}
-	}()
+	wg.Add(3)
+	go cs.HeartBeat()
+	go listenChannel(cs.createListener.Notify)
+	go listenChannel(cs.deleteListener.Notify)
+	cs.Ready()
 
+	logger.Info.Println("Starting cron server ", cs.cronWorker.ID)
 	wg.Wait()
+}
+
+func (cs *CronServer) HeartBeat() {
+	for {
+		cs.cronWorker.KeepAlive()
+		time.Sleep(1 * time.Second)
+	}
+}
+
+func listenChannel(channel chan *pq.Notification) {
+	for event := range channel {
+		logger.Info.Println("Create event: ", event)
+	}
+}
+
+func registerListener(channel string) (*pq.Listener, error) {
+	report := func(ev pq.ListenerEventType, err error) {
+		if err != nil {
+			logger.Info.Println(err.Error())
+		}
+	}
+	minReconn := 10 * time.Second
+	maxReconn := time.Minute
+	listener := pq.NewListener(database.GetDSN(), minReconn, maxReconn, report)
+	err := listener.Listen(channel)
+
+	return listener, err
+}
+
+func (cs *CronServer) Ready() {
+	cs.cronWorker.Ready = true
+	database.GetConnection().Save(&cs.cronWorker)
 }
 
 // func (cj *CronJob) Start() {

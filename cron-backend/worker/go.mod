@@ -5,6 +5,7 @@ go 1.19
 replace github.com/tcerqueira/tiktak/cron-backend/internal => ../internal
 
 require (
+	github.com/lib/pq v1.10.2
 	github.com/tcerqueira/tiktak/cron-backend/internal v0.0.0-20221006133016-9b5a1b20b668
 	gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5
 )
