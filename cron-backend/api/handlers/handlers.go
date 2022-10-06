@@ -6,9 +6,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	cronjob "github.com/tcerqueira/tiktak/cron-backend/internal/cron"
 	database "github.com/tcerqueira/tiktak/cron-backend/internal/database"
 	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
+	model "github.com/tcerqueira/tiktak/cron-backend/internal/model"
 )
 
 type ResponsePayload struct {
@@ -18,7 +18,7 @@ type ResponsePayload struct {
 
 func HandleGetJobsList(res http.ResponseWriter, req *http.Request) {
 	logger.Info.Println("Request - jobs list")
-	jobs := []cronjob.Job{}
+	jobs := []model.Job{}
 	result := database.FetchAllJobs(&jobs)
 
 	writeResponse(res, jobs, result.Error)
@@ -32,7 +32,7 @@ func HandleGetJob(res http.ResponseWriter, req *http.Request) {
 	idStr := id.String()
 	logger.Info.Printf("Request - jobs by id (%s)\n", idStr)
 
-	job := cronjob.Job{ID: cronjob.JobID(idStr)}
+	job := model.Job{ID: model.JobID(idStr)}
 	result := database.FetchJob(&job)
 	if job.ID == "" {
 		writeResponse(res, nil, result.Error)
@@ -42,7 +42,7 @@ func HandleGetJob(res http.ResponseWriter, req *http.Request) {
 }
 
 func HandleCreateJob(res http.ResponseWriter, req *http.Request) {
-	var job cronjob.Job
+	var job model.Job
 	err := json.NewDecoder(req.Body).Decode(&job)
 	if ok := handlePayloadError(res, err); !ok {
 		return
@@ -51,30 +51,27 @@ func HandleCreateJob(res http.ResponseWriter, req *http.Request) {
 
 	result := database.InsertJob(&job)
 	// Schedule task
-	cj := cronjob.CronJob{Job: &job}
+	cj := model.CronJob{Job: &job}
 	cj.Start()
 
 	writeResponse(res, job, result.Error)
 }
 
 func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
-	var targetJob, updateJob cronjob.Job
+	var targetJob, updateJob model.Job
 
 	id, err := uuid.Parse(mux.Vars(req)["id"])
 	if ok := handleParamsError(res, err); !ok {
 		return
 	}
 	idStr := id.String()
-	targetJob = cronjob.Job{ID: cronjob.JobID(idStr)}
+	targetJob = model.Job{ID: model.JobID(idStr)}
 	logger.Info.Printf("Request - update job (%s)\n", idStr)
 
 	err = json.NewDecoder(req.Body).Decode(&updateJob)
 	if ok := handlePayloadError(res, err); !ok {
 		return
 	}
-
-	// Update scheduled task
-	// cron.
 
 	result := database.UpdateJob(&targetJob, &updateJob)
 	if targetJob.ID == "" {
@@ -92,9 +89,7 @@ func HandleDeleteJob(res http.ResponseWriter, req *http.Request) {
 	idStr := id.String()
 	logger.Info.Printf("Request - delete job (%s)\n", idStr)
 
-	// Delete scheduled task
-
-	result := database.DeleteJob(cronjob.JobID(idStr))
+	result := database.DeleteJob(model.JobID(idStr))
 	writeResponse(res, nil, result.Error)
 }
 

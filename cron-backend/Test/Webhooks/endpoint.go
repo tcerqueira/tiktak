@@ -11,7 +11,6 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
-	"gorm.io/gorm/logger"
 )
 
 var (
