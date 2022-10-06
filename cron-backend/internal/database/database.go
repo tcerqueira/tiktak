@@ -41,12 +41,32 @@ func GetDSN() string {
 		os.Getenv("SUPABASE_DB_USER"),
 		os.Getenv("SUPABASE_DB_PASS"),
 		os.Getenv("SUPABASE_DB_HOST"),
-		os.Getenv("SUPABASE_DB_PORT"),
+		os.Getenv("SUPABASE_DB_POOL_PORT"),
 		os.Getenv("SUPABASE_DB_DBNAME"),
 	)
 }
 
 func GetURL() string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
+		os.Getenv("SUPABASE_DB_USER"),
+		os.Getenv("SUPABASE_DB_PASS"),
+		os.Getenv("SUPABASE_DB_HOST"),
+		os.Getenv("SUPABASE_DB_POOL_PORT"),
+		os.Getenv("SUPABASE_DB_DBNAME"),
+	)
+}
+
+func GetDirectDSN() string {
+	return fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s",
+		os.Getenv("SUPABASE_DB_USER"),
+		os.Getenv("SUPABASE_DB_PASS"),
+		os.Getenv("SUPABASE_DB_HOST"),
+		os.Getenv("SUPABASE_DB_PORT"),
+		os.Getenv("SUPABASE_DB_DBNAME"),
+	)
+}
+
+func GetDirectURL() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		os.Getenv("SUPABASE_DB_USER"),
 		os.Getenv("SUPABASE_DB_PASS"),

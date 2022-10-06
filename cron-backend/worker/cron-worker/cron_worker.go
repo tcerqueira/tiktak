@@ -1,7 +1,6 @@
 package cronsv
 
 import (
-	"database/sql"
 	"sync"
 	"time"
 
@@ -29,11 +28,6 @@ func NewServer() *CronServer {
 	result := database.GetConnection().Create(&cs.cronWorker)
 	if result.Error != nil {
 		panic(result.Error.Error())
-	}
-
-	_, err := sql.Open("postgres", database.GetDSN())
-	if err != nil {
-		panic(err)
 	}
 
 	return &cs
@@ -69,8 +63,11 @@ func (cs *CronServer) HeartBeat() {
 }
 
 func listenChannel(channel chan *pq.Notification) {
-	for event := range channel {
-		logger.Info.Println("Create event: ", event)
+	for {
+		select {
+		case event := <-channel:
+			logger.Info.Println("Event: ", *event)
+		}
 	}
 }
 
@@ -82,7 +79,7 @@ func registerListener(channel string) (*pq.Listener, error) {
 	}
 	minReconn := 10 * time.Second
 	maxReconn := time.Minute
-	listener := pq.NewListener(database.GetDSN(), minReconn, maxReconn, report)
+	listener := pq.NewListener(database.GetDirectDSN(), minReconn, maxReconn, report)
 	err := listener.Listen(channel)
 
 	return listener, err
