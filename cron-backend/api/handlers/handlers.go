@@ -3,12 +3,12 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	cronjob "github.com/tcerqueira/tiktak/cron-backend/Nodes/Cron"
-	database "github.com/tcerqueira/tiktak/cron-backend/Nodes/Database"
-	logger "github.com/tcerqueira/tiktak/cron-backend/Nodes/Logger"
+	cronjob "github.com/tcerqueira/tiktak/cron-backend/api/cron"
+	database "github.com/tcerqueira/tiktak/cron-backend/api/database"
+	logger "github.com/tcerqueira/tiktak/cron-backend/api/logger"
 )
 
 type ResponsePayload struct {
@@ -25,14 +25,14 @@ func HandleGetJobsList(res http.ResponseWriter, req *http.Request) {
 }
 
 func HandleGetJob(res http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-	id, err := strconv.Atoi(params["id"])
-	if ok := handleParamsError(res, err, id); !ok {
+	id, err := uuid.Parse(mux.Vars(req)["id"])
+	if ok := handleParamsError(res, err); !ok {
 		return
 	}
-	logger.Info.Printf("Request - jobs by id (%d)\n", id)
+	idStr := id.String()
+	logger.Info.Printf("Request - jobs by id (%s)\n", idStr)
 
-	job := cronjob.Job{ID: cronjob.JobID(id)}
+	job := cronjob.Job{ID: cronjob.JobID(idStr)}
 	result := database.FetchJob(&job)
 	if job.ID == "" {
 		writeResponse(res, nil, result.Error)
@@ -60,13 +60,13 @@ func HandleCreateJob(res http.ResponseWriter, req *http.Request) {
 func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
 	var targetJob, updateJob cronjob.Job
 
-	params := mux.Vars(req)
-	id, err := strconv.Atoi(params["id"])
-	if ok := handleParamsError(res, err, id); !ok {
+	id, err := uuid.Parse(mux.Vars(req)["id"])
+	if ok := handleParamsError(res, err); !ok {
 		return
 	}
-	logger.Info.Printf("Request - update job (%d)\n", id)
-	targetJob = cronjob.Job{ID: cronjob.JobID(id)}
+	idStr := id.String()
+	targetJob = cronjob.Job{ID: cronjob.JobID(idStr)}
+	logger.Info.Printf("Request - update job (%s)\n", idStr)
 
 	err = json.NewDecoder(req.Body).Decode(&updateJob)
 	if ok := handlePayloadError(res, err); !ok {
@@ -85,16 +85,16 @@ func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
 }
 
 func HandleDeleteJob(res http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-	id, err := strconv.Atoi(params["id"])
-	if ok := handleParamsError(res, err, id); !ok {
+	id, err := uuid.Parse(mux.Vars(req)["id"])
+	if ok := handleParamsError(res, err); !ok {
 		return
 	}
-	logger.Info.Printf("Request - delete job (%d)\n", id)
+	idStr := id.String()
+	logger.Info.Printf("Request - delete job (%s)\n", idStr)
 
 	// Delete scheduled task
 
-	result := database.DeleteJob(cronjob.JobID(id))
+	result := database.DeleteJob(cronjob.JobID(idStr))
 	writeResponse(res, nil, result.Error)
 }
 
@@ -120,9 +120,9 @@ func handlePayloadError(res http.ResponseWriter, err error) (ok bool) {
 	return
 }
 
-func handleParamsError(res http.ResponseWriter, err error, id int) (ok bool) {
+func handleParamsError(res http.ResponseWriter, err error) (ok bool) {
 	ok = true
-	if err != nil || id == 0 {
+	if err != nil {
 		res.WriteHeader(http.StatusBadRequest)
 		writeResponse(res, nil, err)
 		ok = false
