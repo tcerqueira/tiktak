@@ -1,4 +1,4 @@
-module github.com/tcerqueira/tiktak/cron-backend/Test
+module github.com/tcerqueira/tiktak/cron-backend/test
 
 go 1.19
 

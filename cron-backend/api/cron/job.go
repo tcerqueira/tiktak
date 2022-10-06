@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	logger "github.com/tcerqueira/tiktak/cron-backend/Nodes/Logger"
+	logger "github.com/tcerqueira/tiktak/cron-backend/api/logger"
 )
 
 type JobID string

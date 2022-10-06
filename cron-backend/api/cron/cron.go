@@ -3,7 +3,7 @@ package cronjob
 import (
 	"fmt"
 
-	logger "github.com/tcerqueira/tiktak/cron-backend/Nodes/Logger"
+	logger "github.com/tcerqueira/tiktak/cron-backend/api/logger"
 	cron "gopkg.in/robfig/cron.v2"
 )
 
