@@ -1,46 +1,16 @@
 package model
 
-import (
-	"fmt"
-
-	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
-	cron "gopkg.in/robfig/cron.v2"
-)
-
-var scheduler = cron.New()
-var cronJobsMap = make(map[JobID]*CronJob)
-
-type CronJobID cron.EntryID
-
-type CronJob struct {
-	Job     *Job
-	EntryID cron.EntryID
-	running bool
-}
+import "github.com/tcerqueira/tiktak/cron-backend/internal/database"
 
 func init() {
-	scheduler.Start()
+	database.GetConnection().AutoMigrate(&CronJob{})
 }
 
-func (cj *CronJob) Start() {
-	if cj.running {
-		return
-	}
-	job := cj.Job
-	var err error
-
-	exp := fmt.Sprintf("TZ=%s %s", job.Timezone, job.CronExpression)
-	cj.EntryID, err = scheduler.AddFunc(exp, func() {
-		job.Trigger()
-	})
-	if err != nil {
-		logger.Error.Println("error 'Start': Adding Job: ", err.Error(), *job)
-		return
-	}
-
-	cj.running = true
-	cronJobsMap[job.ID] = cj
-	// for key, el := range cronJobsMap {
-	// 	fmt.Printf("%d => {%v, %d}\n", int(key), el.Job, int(el.EntryID))
-	// }
+type CronJob struct {
+	ID       string `gorm:"type:uuid;default:uuid_generate_v4()"`
+	JobID    string
+	Job      Job `gorm:"constraint:OnDelete:CASCADE;"`
+	WorkerID string
+	Worker   CronWorker `gorm:"constraint:OnDelete:CASCADE;"`
+	Status   int        `gorm:"default:0"` // 0-new; 1-assigned
 }

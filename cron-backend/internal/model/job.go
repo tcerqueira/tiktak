@@ -1,18 +1,17 @@
 package model
 
 import (
-	"bytes"
-	"fmt"
-	"io"
-	"net/http"
-
-	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
+	database "github.com/tcerqueira/tiktak/cron-backend/internal/database"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
-type JobID string
+func init() {
+	database.GetConnection().AutoMigrate(&Job{})
+}
 
 type Job struct {
-	ID             JobID  `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
+	ID             string `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	WebhookURL     string `json:"webhook_url"`
 	WebhookMethod  string `json:"webhook_method"`
 	Body           string `json:"body"`
@@ -20,37 +19,35 @@ type Job struct {
 	Timezone       string `json:"timezone"`
 }
 
-func (j *Job) Trigger() {
-	// fmt.Printf("%s - %d - %v\n", time.Now().Format(time.RubyDate), j.ID, j)
-	client := http.DefaultClient
-	var (
-		url        string
-		bodyReader io.Reader
-	)
+func FetchAllJobs(rows *[]Job) *gorm.DB {
+	db := database.GetConnection()
+	return db.Find(&rows)
+}
 
-	if j.WebhookMethod == "GET" {
-		// Insert body param in URL in case of GET method
-		url = fmt.Sprintf(`%s?body="%s"`, j.WebhookURL, j.Body)
-		bodyReader = nil
-	} else {
-		// Form body in every other method
-		url = j.WebhookURL
-		jsonBody := fmt.Sprintf(`{"body":"%s"}`, j.Body) // JSON encoding "à pedreiro"
-		bodyReader = bytes.NewReader([]byte(jsonBody))
+func FetchJob(job *Job) *gorm.DB {
+	db := database.GetConnection()
+	result := db.Find(job)
+	if result.RowsAffected == 0 {
+		job.ID = ""
 	}
+	return result
+}
 
-	req, err := http.NewRequest(j.WebhookMethod, url, bodyReader)
-	if err != nil {
-		logger.Warn.Println("error 'Trigger': Creating request: ", err.Error(), *j)
-		return
+func InsertJob(job *Job) *gorm.DB {
+	db := database.GetConnection()
+	return db.Create(&job)
+}
+
+func UpdateJob(target, job *Job) *gorm.DB {
+	db := database.GetConnection()
+	result := db.Model(target).Clauses(clause.Returning{}).Updates(job)
+	if result.RowsAffected == 0 {
+		target.ID = ""
 	}
-	req.Header.Set("Content-Type", "application/json")
+	return result
+}
 
-	_, err = client.Do(req)
-	if err != nil {
-		logger.Warn.Println("error 'Trigger': Sending request: ", err.Error(), *j)
-		return
-	}
-
-	return
+func DeleteJob(id string) *gorm.DB {
+	db := database.GetConnection()
+	return db.Delete(&Job{ID: id})
 }

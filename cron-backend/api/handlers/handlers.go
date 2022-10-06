@@ -6,7 +6,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	database "github.com/tcerqueira/tiktak/cron-backend/internal/database"
 	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
 	model "github.com/tcerqueira/tiktak/cron-backend/internal/model"
 )
@@ -19,7 +18,7 @@ type ResponsePayload struct {
 func HandleGetJobsList(res http.ResponseWriter, req *http.Request) {
 	logger.Info.Println("Request - jobs list")
 	jobs := []model.Job{}
-	result := database.FetchAllJobs(&jobs)
+	result := model.FetchAllJobs(&jobs)
 
 	writeResponse(res, jobs, result.Error)
 }
@@ -32,8 +31,8 @@ func HandleGetJob(res http.ResponseWriter, req *http.Request) {
 	idStr := id.String()
 	logger.Info.Printf("Request - jobs by id (%s)\n", idStr)
 
-	job := model.Job{ID: model.JobID(idStr)}
-	result := database.FetchJob(&job)
+	job := model.Job{ID: idStr}
+	result := model.FetchJob(&job)
 	if job.ID == "" {
 		writeResponse(res, nil, result.Error)
 		return
@@ -47,13 +46,9 @@ func HandleCreateJob(res http.ResponseWriter, req *http.Request) {
 	if ok := handlePayloadError(res, err); !ok {
 		return
 	}
-	logger.Info.Printf("Request - create job (%v)\n", job)
+	logger.Info.Printf("Request - create job %v\n", job)
 
-	result := database.InsertJob(&job)
-	// Schedule task
-	cj := model.CronJob{Job: &job}
-	cj.Start()
-
+	result := model.InsertJob(&job)
 	writeResponse(res, job, result.Error)
 }
 
@@ -65,7 +60,7 @@ func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	idStr := id.String()
-	targetJob = model.Job{ID: model.JobID(idStr)}
+	targetJob = model.Job{ID: idStr}
 	logger.Info.Printf("Request - update job (%s)\n", idStr)
 
 	err = json.NewDecoder(req.Body).Decode(&updateJob)
@@ -73,11 +68,7 @@ func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	result := database.UpdateJob(&targetJob, &updateJob)
-	if targetJob.ID == "" {
-		writeResponse(res, nil, result.Error)
-		return
-	}
+	result := model.UpdateJob(&targetJob, &updateJob)
 	writeResponse(res, targetJob, result.Error)
 }
 
@@ -89,7 +80,7 @@ func HandleDeleteJob(res http.ResponseWriter, req *http.Request) {
 	idStr := id.String()
 	logger.Info.Printf("Request - delete job (%s)\n", idStr)
 
-	result := database.DeleteJob(model.JobID(idStr))
+	result := model.DeleteJob(idStr)
 	writeResponse(res, nil, result.Error)
 }
 
