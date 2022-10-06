@@ -10,7 +10,7 @@ import (
 	handlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	h "github.com/tcerqueira/tiktak/cron-backend/api/handlers"
-	logger "github.com/tcerqueira/tiktak/cron-backend/api/logger"
+	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
 )
 
 var (
