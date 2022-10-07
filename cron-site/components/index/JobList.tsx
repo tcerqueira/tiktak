@@ -9,7 +9,7 @@ const mock: CronJob = {
   webhook_url: 'https://localhost:3000/api/',
   webhook_method: 'POST',
   body: 'ITS TIME MF',
-  expression: '* * * * *',
+  cron_expression: '* * * * *',
   timezone: 'Europe/Lisbon'
 };
 

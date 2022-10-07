@@ -15,7 +15,7 @@ type Job struct {
 	WebhookURL     string `json:"webhook_url"`
 	WebhookMethod  string `json:"webhook_method"`
 	Body           string `json:"body"`
-	CronExpression string `json:"expression"`
+	CronExpression string `json:"cron_expression"`
 	Timezone       string `json:"timezone"`
 }
 

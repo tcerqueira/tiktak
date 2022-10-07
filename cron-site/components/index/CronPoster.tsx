@@ -10,7 +10,7 @@ interface FormData {
 	webhook_url: string;
 	webhook_method: string;
 	body: string;
-	expression: string;
+	cron_expression: string;
 }
 
 function CronPoster() {
@@ -45,7 +45,7 @@ function CronPoster() {
 					<TextArea id='body-in' label='Body' defaultValue='Your time is up!' {...register('body')}/>
 				</div>
 				<div className='input-container'>
-					<TextInput id='schedule-in' label='Schedule' placeholder='* * * * *' {...register('expression')}/>
+					<TextInput id='schedule-in' label='Schedule' placeholder='* * * * *' {...register('cron_expression')}/>
 				</div>
 				<div className='input-container'>
 					<label htmlFor='timezone-in'>Timezone</label>
