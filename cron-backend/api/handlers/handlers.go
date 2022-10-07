@@ -53,14 +53,14 @@ func HandleCreateJob(res http.ResponseWriter, req *http.Request) {
 }
 
 func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
-	var targetJob, updateJob model.Job
+	var currentJob, updateJob model.Job
 
 	id, err := uuid.Parse(mux.Vars(req)["id"])
 	if ok := handleParamsError(res, err); !ok {
 		return
 	}
 	idStr := id.String()
-	targetJob = model.Job{ID: idStr}
+	currentJob = model.Job{ID: idStr}
 	logger.Info.Printf("Request - update job (%s)\n", idStr)
 
 	err = json.NewDecoder(req.Body).Decode(&updateJob)
@@ -68,8 +68,24 @@ func HandleUpdateJob(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	result := model.UpdateJob(&targetJob, &updateJob)
-	writeResponse(res, targetJob, result.Error)
+	result := model.FetchJob(&currentJob)
+	if currentJob.ID == "" {
+		res.WriteHeader(404)
+		return
+	}
+	result = model.DeleteJob(currentJob.ID)
+	if result.Error != nil {
+		writeResponse(res, nil, result.Error)
+		return
+	}
+	currentJob.Update(&updateJob)
+	result = model.InsertJob(&currentJob)
+	if result.Error != nil {
+		res.WriteHeader(500)
+		writeResponse(res, nil, result.Error)
+		return
+	}
+	writeResponse(res, currentJob, nil)
 }
 
 func HandleDeleteJob(res http.ResponseWriter, req *http.Request) {

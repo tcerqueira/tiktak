@@ -7,10 +7,9 @@ func init() {
 }
 
 type CronJob struct {
-	ID       string `gorm:"type:uuid;default:uuid_generate_v4()"`
 	JobID    string
-	Job      Job `gorm:"constraint:OnDelete:CASCADE;"`
+	Job      Job `gorm:"primaryKey;constraint:OnDelete:CASCADE;"`
 	WorkerID string
-	Worker   CronWorker `gorm:"constraint:OnDelete:CASCADE;"`
+	Worker   CronWorker `gorm:"primaryKey;constraint:OnDelete:CASCADE;"`
 	Status   int        `gorm:"default:0"` // 0-new; 1-assigned
 }

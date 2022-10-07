@@ -19,6 +19,27 @@ type Job struct {
 	Timezone       string `json:"timezone"`
 }
 
+func (j *Job) Update(updateJob *Job) {
+	if updateJob.ID != "" {
+		j.ID = updateJob.ID
+	}
+	if updateJob.WebhookURL != "" {
+		j.WebhookURL = updateJob.WebhookURL
+	}
+	if updateJob.WebhookMethod != "" {
+		j.WebhookMethod = updateJob.WebhookMethod
+	}
+	if updateJob.Body != "" {
+		j.Body = updateJob.Body
+	}
+	if updateJob.CronExpression != "" {
+		j.CronExpression = updateJob.CronExpression
+	}
+	if updateJob.Timezone != "" {
+		j.Timezone = updateJob.Timezone
+	}
+}
+
 func FetchAllJobs(rows *[]Job) *gorm.DB {
 	db := database.GetConnection()
 	return db.Find(&rows)
