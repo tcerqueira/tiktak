@@ -12,15 +12,16 @@ import (
 
 type CronServer struct {
 	CronWorker     model.CronWorker
-	Scheduler      *CronScheduler
+	scheduler      *CronScheduler
 	createListener *pq.Listener
 	deleteListener *pq.Listener
+	mtx            sync.Mutex
 }
 
 func NewServer() *CronServer {
 	var cs CronServer
 	cs.CronWorker = model.CronWorker{}
-	cs.Scheduler = NewScheduler()
+	cs.scheduler = NewScheduler()
 
 	result := database.GetConnection().Create(&cs.CronWorker)
 	if result.Error != nil {
@@ -40,7 +41,7 @@ func (cs *CronServer) Start() {
 	if err != nil {
 		panic(err.Error())
 	}
-	cs.Scheduler.Start()
+	cs.scheduler.Start()
 
 	var wg sync.WaitGroup
 	wg.Add(3)
@@ -51,6 +52,20 @@ func (cs *CronServer) Start() {
 
 	logger.Info.Println("Starting cron server ", cs.CronWorker.ID)
 	wg.Wait()
+}
+
+func (cs *CronServer) AddCronJob(job *model.Job) {
+	cs.mtx.Lock()
+	defer cs.mtx.Unlock()
+	cs.scheduler.AddCronJob(job)
+	cs.CronWorker.WorkCount++
+}
+
+func (cs *CronServer) RemoveCronJob(id string) {
+	cs.mtx.Lock()
+	defer cs.mtx.Unlock()
+	cs.scheduler.RemoveCronJob(id)
+	cs.CronWorker.WorkCount--
 }
 
 func (cs *CronServer) heartBeat() {

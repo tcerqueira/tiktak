@@ -7,7 +7,7 @@ DECLARE
 BEGIN
     -- Choose insert cron job and assign worker to dispatch
     INSERT INTO cron_jobs(job_id, worker_id) VALUES (NEW.id,
-        (SELECT id FROM cron_workers WHERE now() - updated_at < '5 second'::interval AND ready=true ORDER BY work_count ASC LIMIT 1)
+        (SELECT id FROM cron_workers WHERE now() - updated_at < '5 second'::interval AND ready=true ORDER BY work_count ASC, updated_at DESC LIMIT 1)
     ) RETURNING worker_id INTO w_id;
 	-- UPDATE cron_workers SET work_count=(work_count + 1) WHERE id=w_id;
     -- Notify worker

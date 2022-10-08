@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"sync"
 
 	"github.com/tcerqueira/tiktak/cron-backend/internal/logger"
 	"github.com/tcerqueira/tiktak/cron-backend/internal/model"
@@ -15,7 +14,6 @@ import (
 type CronScheduler struct {
 	scheduler   *cron.Cron
 	cronJobsMap map[string]cron.EntryID
-	mtx         sync.Mutex
 }
 
 func NewScheduler() *CronScheduler {
@@ -31,8 +29,6 @@ func (s *CronScheduler) Start() {
 }
 
 func (s *CronScheduler) AddCronJob(job *model.Job) {
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
 	exp := fmt.Sprintf("TZ=%s %s", job.Timezone, job.CronExpression)
 	entryID, err := s.scheduler.AddFunc(exp, func() {
 		Trigger(*job)
@@ -45,8 +41,6 @@ func (s *CronScheduler) AddCronJob(job *model.Job) {
 }
 
 func (s *CronScheduler) RemoveCronJob(id string) {
-	s.mtx.Lock()
-	defer s.mtx.Unlock()
 	entryID := s.cronJobsMap[id]
 	s.scheduler.Remove(entryID)
 	delete(s.cronJobsMap, id)

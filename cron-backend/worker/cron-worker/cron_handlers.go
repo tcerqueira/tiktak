@@ -16,12 +16,10 @@ func HandleCreateCron(cs *CronServer, event *pq.Notification) {
 		logger.Error.Println("'Handle create': ", err.Error(), event.Extra)
 		return
 	}
-	cs.Scheduler.AddCronJob(&newJob)
-	cs.CronWorker.WorkCount++
+	cs.AddCronJob(&newJob)
 }
 
 func HandleDeleteCron(cs *CronServer, event *pq.Notification) {
 	logger.Info.Println("Event 'Delete': ", event.Extra)
-	cs.Scheduler.RemoveCronJob(event.Extra)
-	cs.CronWorker.WorkCount--
+	cs.RemoveCronJob(event.Extra)
 }
