@@ -105,6 +105,7 @@ func writeResponse(res http.ResponseWriter, data interface{}, err error) error {
 	if err != nil {
 		errStr = err.Error()
 	}
+	res.Header().Set("Content-Type", "application/json")
 	response := ResponsePayload{
 		Data:  data,
 		Error: errStr,
