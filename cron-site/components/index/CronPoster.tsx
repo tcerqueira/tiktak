@@ -21,15 +21,20 @@ interface CronPosterProps {
 
 function CronPoster({ onPost }: CronPosterProps) {
 	const [selectedTimezone, setSelectedTimezone] = useState<ITimezone>(Intl.DateTimeFormat().resolvedOptions().timeZone);
-	const { register, handleSubmit } = useForm<CronFormData>();
+	const { register, handleSubmit } = useForm<CronFormData>({
+		defaultValues: {
+			webhook_url: 'http://localhost:8050/webhook',
+			webhook_method: 'POST',
+			body: "Time's up!",
+			cron_expression: '* * * * *',
+		}
+	});
 
 	const onSubmit = useCallback(async (data: CronFormData) => {
 		try {
 			const timezone = typeof selectedTimezone === 'string' ? selectedTimezone : selectedTimezone.value;
 			const payload: PostCronPayload = { ...data, timezone };
-			console.log(payload);
 			const response = await postCron(payload);
-			console.log(response);
 			onPost && onPost(data);
 		} catch (err) {
 			console.error(err)
@@ -43,7 +48,7 @@ function CronPoster({ onPost }: CronPosterProps) {
 			<form className='flex flex-col' onSubmit={handleSubmit(onSubmit)}>
 				<div className='webhook-container'>
 					<div className='input-container md:grow'>
-						<TextInput id='webhook-in' label='Webhook URL' /*defaultValue='http://localhost:8050/webhook'*/ placeholder='https://webhook-example.com/endpoint'
+						<TextInput id='webhook-in' label='Webhook URL' placeholder='https://webhook-example.com/endpoint'
 							{...register('webhook_url', { required: true })}/>
 					</div>
 					<div className='input-container md:basis-1'>
@@ -62,7 +67,7 @@ function CronPoster({ onPost }: CronPosterProps) {
 						{...register('body', { required: true })}/>
 				</div>
 				<div className='input-container'>
-					<TextInput id='schedule-in' label='Schedule' /*defaultValue='* * * * *'*/ placeholder='* * * * *'
+					<TextInput id='schedule-in' label='Schedule' placeholder='* * * * *'
 						{...register('cron_expression', { required: true, pattern: cronRegex })}/>
 				</div>
 				<div className='input-container'>
@@ -73,7 +78,7 @@ function CronPoster({ onPost }: CronPosterProps) {
 						}}
 					/>
 				</div>
-				<button type='submit' className='flex justify-center items-center md:w-[60%] w-[100%] rounded-lg self-center cursor-pointer hover:backdrop-brightness-90'>
+				<button type='submit' className='flex justify-center items-center md:w-[60%] w-[100%] border-2 border-transparent rounded-lg bg-teal-200 self-center cursor-pointer hover:border-orange-500'>
 					<ClockIcon className='h-10 w-10 text-orange-600' />
 				</button>
 			</form>
