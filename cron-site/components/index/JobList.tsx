@@ -1,10 +1,14 @@
 import React from 'react'
-import useCronList from '../../hooks/useCronList';
+import { CronJob } from '../../types/CronJob';
 import JobItem from './JobItem'
 
-function JobList() {
-  const { cronList, isLoading, error } = useCronList();
+interface JobListProps {
+  cronList: CronJob[];
+  isLoading: boolean;
+  error?: string;
+}
 
+function JobList({ cronList, isLoading, error }: JobListProps) {
   return (
     <div>
       <h1 className='text-center'>{error ? error : isLoading ? "Loading..." : "CRONS"}</h1>

@@ -6,27 +6,31 @@ import TextInput from '../TextInput';
 import TextArea from '../TextArea';
 import SelectInput from '../SelectInput';
 import { cronRegex } from '../../utils/RegEx'
-import { CronJob } from '../../types/CronJob';
 import { postCron, PostCronPayload } from '../../utils/ApiCalls';
 
-interface FormData {
+export interface CronFormData {
 	webhook_url: string;
 	webhook_method: string;
 	body: string;
 	cron_expression: string;
+};
+
+interface CronPosterProps {
+	onPost?: (data: CronFormData) => void;
 }
 
-function CronPoster() {
+function CronPoster({ onPost }: CronPosterProps) {
 	const [selectedTimezone, setSelectedTimezone] = useState<ITimezone>(Intl.DateTimeFormat().resolvedOptions().timeZone);
-	const { register, handleSubmit } = useForm<FormData>();
+	const { register, handleSubmit } = useForm<CronFormData>();
 
-	const onSubmit = useCallback(async (data: FormData) => {
+	const onSubmit = useCallback(async (data: CronFormData) => {
 		try {
 			const timezone = typeof selectedTimezone === 'string' ? selectedTimezone : selectedTimezone.value;
 			const payload: PostCronPayload = { ...data, timezone };
 			console.log(payload);
 			const response = await postCron(payload);
-			console.log(response)
+			console.log(response);
+			onPost && onPost(data);
 		} catch (err) {
 			console.error(err)
 		}
