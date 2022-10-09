@@ -8,7 +8,7 @@
     }
 
     .input-container > label {
-        @apply basis-1/3 md:basis-1/5;
+        @apply basis-1/3 md:basis-1/5 self-start;
     }
 
     .input-container > input, textarea, select {
@@ -29,5 +29,29 @@
 
     .cronjob__item--icon {
         @apply h-8 w-8 text-orange-600;
+    }
+
+    .delete-prompt-btns {
+        @apply border-2 rounded-lg border-transparent px-[10%] py-1 hover:border-orange-500
+    }
+
+    .span-GET {
+        @apply text-green-600
+    }
+
+    .span-POST {
+        @apply text-blue-600
+    }
+
+    .span-PUT {
+        @apply text-purple-600
+    }
+
+    .span-PATCH {
+        @apply text-orange-600
+    }
+
+    .span-DELETE {
+        @apply text-red-600
     }
 }
