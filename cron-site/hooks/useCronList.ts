@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { CronJob } from "../types/CronJob";
+import { fetchCronList } from "../utils/ApiCalls";
 
 export default function useCronList() {
     const [cronList, setCronList] = useState<CronJob[]>([]);
@@ -10,8 +11,7 @@ export default function useCronList() {
         (async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch("http://localhost:8080/cron");
-                const { data } = await response.json();
+                const { data } = await fetchCronList();
                 setIsLoading(false);
                 setCronList(data);
             } catch (err) {

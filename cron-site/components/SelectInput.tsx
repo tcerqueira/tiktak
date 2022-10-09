@@ -1,17 +1,16 @@
 import React from 'react'
 
 interface SelectInputProps {
-    id: string;
-    name: string;
     label: string;
-    onChange?: ((opt: React.ChangeEvent<HTMLSelectElement>) => void)
-    children?: JSX.Element | JSX.Element[]
+    onChange?: ((opt: React.ChangeEvent<HTMLSelectElement>) => void);
+    children?: JSX.Element | JSX.Element[];
+    [props: string]: unknown;
 }
 
-const SelectInput = React.forwardRef<HTMLSelectElement, SelectInputProps>(({ id, name, label, onChange, children, ...props }, ref) => (
+const SelectInput = React.forwardRef<HTMLSelectElement, SelectInputProps>(({ label, onChange, children, ...props }, ref) => (
     <>
-        <label htmlFor={id}>{label}</label>
-        <select ref={ref} id={id} onChange={onChange} {...props}>
+        <label>{label}</label>
+        <select ref={ref} onChange={onChange} {...props}>
             {children}
         </select>
     </>

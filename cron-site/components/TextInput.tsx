@@ -2,15 +2,15 @@ import React from 'react'
 
 interface InputProps {
   id: string;
-  name: string;
   label: string;
   placeholder?: string;
+  [props: string]: unknown;
 }
 
-const TextInput = React.forwardRef<HTMLInputElement, InputProps>(({ id, name, label, placeholder, ...props }, ref) => (
+const TextInput = React.forwardRef<HTMLInputElement, InputProps>(({ id, label, placeholder, ...props }, ref) => (
   <>
-    <label htmlFor={id}>Schedule</label>
-    <input ref={ref} id={id} type='text' name={name} placeholder={placeholder || ''} {...props} />
+    <label htmlFor={id}>{label}</label>
+    <input ref={ref} id={id} type='text' placeholder={placeholder || ''} {...props} />
   </>
 ));
 
