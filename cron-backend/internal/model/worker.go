@@ -21,5 +21,5 @@ type CronWorker struct {
 func (cw *CronWorker) KeepAlive() {
 	db := database.GetConnection()
 	cw.AlivePing = !cw.AlivePing
-	db.Save(cw)
+	db.Model(cw).Update("alive_ping", cw.AlivePing)
 }
