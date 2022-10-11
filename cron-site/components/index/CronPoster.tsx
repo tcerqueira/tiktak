@@ -21,7 +21,7 @@ interface CronPosterProps {
 
 function CronPoster({ onPost }: CronPosterProps) {
 	const [selectedTimezone, setSelectedTimezone] = useState<ITimezone>(Intl.DateTimeFormat().resolvedOptions().timeZone);
-	const { register, handleSubmit } = useForm<CronFormData>({
+	const { register, handleSubmit, formState: {errors} } = useForm<CronFormData>({
 		defaultValues: {
 			webhook_url: 'http://localhost:8050/webhook',
 			webhook_method: 'POST',
@@ -62,14 +62,16 @@ function CronPoster({ onPost }: CronPosterProps) {
 						</SelectInput>
 					</div>
 				</div>
+				{ errors.webhook_url && <p className='error-message'>Webhook URL is required.</p> }
 				<div className='input-container'>
 					<TextArea id='body-in' label='Body' defaultValue='Your time is up!'
-						{...register('body', { required: true })}/>
+						{...register('body')}/>
 				</div>
 				<div className='input-container'>
 					<TextInput id='schedule-in' label='Schedule' placeholder='* * * * *'
 						{...register('cron_expression', { required: true, pattern: cronRegex })}/>
 				</div>
+				{ errors.cron_expression && <p className='error-message'>Invalid CRON expression.</p> }
 				<div className='input-container'>
 					<label htmlFor='timezone-in'>Timezone</label>
 					<TimezoneSelect value={selectedTimezone} onChange={(tz) => {
@@ -78,7 +80,7 @@ function CronPoster({ onPost }: CronPosterProps) {
 						}}
 					/>
 				</div>
-				<button type='submit' className='submit-btn bg-teal-200'>
+				<button type='submit' className='submit-btn bg-teal-200 mt-4'>
 					<ClockIcon className='h-10 w-10 text-orange-600' />
 				</button>
 			</form>

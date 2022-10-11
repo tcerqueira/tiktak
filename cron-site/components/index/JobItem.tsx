@@ -7,6 +7,7 @@ import { deleteCron, editCron, EditCronPayload } from '../../utils/ApiCalls';
 import { useForm } from 'react-hook-form';
 import TextArea from '../TextArea';
 import TextInput from '../TextInput';
+import { cronRegex } from '../../utils/RegEx';
 
 interface EditCronFormData {
 	body?: string,
@@ -23,7 +24,7 @@ function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expres
 	const [editOpen, setEditOpen] = useState(false);
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [selectedTimezone, setSelectedTimezone] = useState<ITimezone>(timezone);
-	const { register, handleSubmit } = useForm<EditCronFormData>({
+	const { register, handleSubmit, formState: {errors} } = useForm<EditCronFormData>({
 		defaultValues: {
 			body,
 			cron_expression
@@ -48,7 +49,7 @@ function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expres
 					<HR />
 					<p className='mt-2'>{body}</p>
 				</div>
-				<div className='flex items-center space-x-5 self-start mt-2'>
+				<div className='flex items-center space-x-5 self-start mt-3'>
 					<div className='cronjob__item--div' onClick={() => setEditOpen(e => !e)}>
 						<PencilIcon className='cronjob__item--icon' />
 						<span className='hidden sm:inline'>Edit</span>
@@ -64,20 +65,17 @@ function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expres
 				<HR />
 				<form className='flex flex-col p-1' onSubmit={handleSubmit(handleEdit)}>
 					<div className='input-container'>
-						{/* <label htmlFor='body-in'>Body</label>
-						<textarea id="body-in" cols={30} rows={4} defaultValue={body} /> */}
 						<TextArea id='body-in' label='Body' {...register('body')}/>
 					</div>
-					<div className='input-container'>
-						{/* <label htmlFor='schedule-in'>Schedule</label>
-						<input id='schedule-in' defaultValue={cron_expression} type='text' placeholder='* * * * *' /> */}
-						<TextInput id='schedule-in' label='Schedule' placeholder='* * * * *' {...register('cron_expression')}/>
+					<div className={`input-container ${errors.cron_expression && 'input-error'}`}>
+						<TextInput id='schedule-in' label='Schedule' placeholder='* * * * *' {...register('cron_expression', { required: true, pattern: cronRegex })}/>
 					</div>
+					{ errors.cron_expression && <p className='error-message'>Invalid CRON expression.</p> }
 					<div className='input-container'>
 						<label htmlFor='timezone-in'>Timezone</label>
 						<TimezoneSelect value={selectedTimezone} onChange={setSelectedTimezone} />
 					</div>
-					<button type='submit' className='submit-btn bg-blue-300'>
+					<button type='submit' className='submit-btn bg-blue-300 mt-4'>
 						<ClockIcon className='h-10 w-10 text-orange-600' />
 					</button>
 				</form>

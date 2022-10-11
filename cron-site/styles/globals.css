@@ -15,6 +15,14 @@
         @apply basis-2/3 resize-none md:grow rounded-sm;
     }
 
+    .input-error > input {
+        @apply border-red-600
+    }
+
+    .error-message {
+        @apply text-red-600 text-end
+    }
+
     .webhook-container {
         @apply md:flex md:items-center
     }
@@ -38,24 +46,26 @@
     .submit-btn {
         @apply flex justify-center items-center md:w-[60%] w-[100%] border-2 border-transparent rounded-lg self-center cursor-pointer hover:border-orange-500
     }
+}
 
+@layer {
     .span-GET {
-        @apply text-green-600
+        @apply text-green-700
     }
 
     .span-POST {
-        @apply text-blue-600
+        @apply text-blue-700
     }
 
     .span-PUT {
-        @apply text-purple-600
+        @apply text-purple-700
     }
 
     .span-PATCH {
-        @apply text-orange-600
+        @apply text-orange-700
     }
 
     .span-DELETE {
-        @apply text-red-600
+        @apply text-red-700
     }
 }
