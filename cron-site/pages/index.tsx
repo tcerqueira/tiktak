@@ -18,7 +18,7 @@ const Home: NextPage = () => {
       <Header />
       <main className='min-h-screen pt-16 px-1 pb-[100px] max-w-[768px] mx-auto'>
         <CronPoster onPost={(d) => fetchList()}/>
-        <JobList cronList={cronList} isLoading={isLoading} error={error}/>
+        <JobList cronList={cronList} isLoading={isLoading} error={error} fetchList={fetchList}/>
       </main>
     </div>
   )

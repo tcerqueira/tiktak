@@ -35,6 +35,10 @@
         @apply border-2 rounded-lg border-transparent px-[10%] py-1 hover:border-orange-500
     }
 
+    .submit-btn {
+        @apply flex justify-center items-center md:w-[60%] w-[100%] border-2 border-transparent rounded-lg self-center cursor-pointer hover:border-orange-500
+    }
+
     .span-GET {
         @apply text-green-600
     }

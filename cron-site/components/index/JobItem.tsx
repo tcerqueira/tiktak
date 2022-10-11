@@ -3,24 +3,42 @@ import { ClockIcon, PencilIcon } from '@heroicons/react/solid';
 import { TrashIcon } from '@heroicons/react/solid';
 import TimezoneSelect, { ITimezone } from 'react-timezone-select';
 import { CronJob } from '../../types/CronJob';
-import { deleteCron } from '../../utils/ApiCalls';
+import { deleteCron, editCron, EditCronPayload } from '../../utils/ApiCalls';
+import { useForm } from 'react-hook-form';
+import TextArea from '../TextArea';
+import TextInput from '../TextInput';
 
-interface JobItemProps {
-	cronJob: CronJob
+interface EditCronFormData {
+	body?: string,
+    cron_expression?: string
 }
 
-function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expression, timezone } }: JobItemProps) {
+interface JobItemProps {
+	cronJob: CronJob,
+	onEdit: (id: string, cron: EditCronPayload) => void;
+	onDelete: (id: string) => void;
+}
+
+function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expression, timezone }, onEdit, onDelete }: JobItemProps) {
 	const [editOpen, setEditOpen] = useState(false);
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [selectedTimezone, setSelectedTimezone] = useState<ITimezone>(timezone);
-
-	const onDelete: MouseEventHandler<HTMLButtonElement> = useCallback(async evt => {
-		try {
-			await deleteCron(id);
-		} catch (err) {
-			console.error(err);
+	const { register, handleSubmit } = useForm<EditCronFormData>({
+		defaultValues: {
+			body,
+			cron_expression
 		}
-	}, []);
+	});
+
+	const handleDelete: MouseEventHandler<HTMLButtonElement> = evt => {
+		onDelete(id);
+	};
+
+	const handleEdit = useCallback((data: EditCronFormData) => {
+		const timezone = typeof selectedTimezone === 'string' ? selectedTimezone : selectedTimezone.value;
+		const payload: EditCronPayload = { ...data, timezone };
+		onEdit(id, payload);
+	}, [id, selectedTimezone]);
 
 	return (
 		<div className='my-2 px-2 rounded-lg border-b-2 border-t-2 border-orange-500 '>
@@ -44,20 +62,22 @@ function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expres
 
 			{editOpen && <>
 				<HR />
-				<form className='p-1'>
+				<form className='flex flex-col p-1' onSubmit={handleSubmit(handleEdit)}>
 					<div className='input-container'>
-						<label htmlFor='body-in'>Body</label>
-						<textarea id="body-in" cols={30} rows={4} defaultValue={body} />
+						{/* <label htmlFor='body-in'>Body</label>
+						<textarea id="body-in" cols={30} rows={4} defaultValue={body} /> */}
+						<TextArea id='body-in' label='Body' {...register('body')}/>
 					</div>
 					<div className='input-container'>
-						<label htmlFor='schedule-in'>Schedule</label>
-						<input id='schedule-in' defaultValue={cron_expression} type='text' placeholder='* * * * *' />
+						{/* <label htmlFor='schedule-in'>Schedule</label>
+						<input id='schedule-in' defaultValue={cron_expression} type='text' placeholder='* * * * *' /> */}
+						<TextInput id='schedule-in' label='Schedule' placeholder='* * * * *' {...register('cron_expression')}/>
 					</div>
 					<div className='input-container'>
 						<label htmlFor='timezone-in'>Timezone</label>
 						<TimezoneSelect value={selectedTimezone} onChange={setSelectedTimezone} />
 					</div>
-					<button type='submit' className='flex justify-center items-center md:w-[60%] w-[100%] rounded-lg mx-auto cursor-pointer hover:backdrop-brightness-90'>
+					<button type='submit' className='submit-btn bg-blue-300'>
 						<ClockIcon className='h-10 w-10 text-orange-600' />
 					</button>
 				</form>
@@ -66,7 +86,7 @@ function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expres
 			{deleteOpen && <>
 				<HR />
 				<div className='flex justify-center items-center space-x-5 py-3'>
-					<button className='delete-prompt-btns bg-red-300' onClick={onDelete}>Delete</button>
+					<button className='delete-prompt-btns bg-red-300' onClick={handleDelete}>Delete</button>
 					<button className='delete-prompt-btns bg-gray-300' onClick={() => setDeleteOpen(d => !d)}>Cancel</button>
 				</div>
 				</>

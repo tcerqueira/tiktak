@@ -78,7 +78,7 @@ function CronPoster({ onPost }: CronPosterProps) {
 						}}
 					/>
 				</div>
-				<button type='submit' className='flex justify-center items-center md:w-[60%] w-[100%] border-2 border-transparent rounded-lg bg-teal-200 self-center cursor-pointer hover:border-orange-500'>
+				<button type='submit' className='submit-btn bg-teal-200'>
 					<ClockIcon className='h-10 w-10 text-orange-600' />
 				</button>
 			</form>
