@@ -51,6 +51,7 @@ function CronPoster({ onPost }: CronPosterProps) {
 						<TextInput id='webhook-in' label='Webhook URL' placeholder='https://webhook-example.com/endpoint'
 							{...register('webhook_url', { required: true })}/>
 					</div>
+					{ errors.webhook_url && <p className='error-message md:hidden'>Webhook URL is required.</p> }
 					<div className='input-container md:basis-1'>
 						<SelectInput label='Webhook Method'
 							{...register('webhook_method', { required: true })}>
@@ -62,7 +63,7 @@ function CronPoster({ onPost }: CronPosterProps) {
 						</SelectInput>
 					</div>
 				</div>
-				{ errors.webhook_url && <p className='error-message'>Webhook URL is required.</p> }
+				{ errors.webhook_url && <p className='error-message hidden md:inline'>Webhook URL is required.</p> }
 				<div className='input-container'>
 					<TextArea id='body-in' label='Body' defaultValue='Your time is up!'
 						{...register('body')}/>
@@ -80,7 +81,7 @@ function CronPoster({ onPost }: CronPosterProps) {
 						}}
 					/>
 				</div>
-				<button type='submit' className='submit-btn bg-teal-200 mt-4'>
+				<button type='submit' className='submit-btn bg-green-200 mt-4'>
 					<ClockIcon className='h-10 w-10 text-orange-600' />
 				</button>
 			</form>
