@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/tcerqueira/tiktak/cron-backend/internal/logger"
 	"github.com/tcerqueira/tiktak/cron-backend/internal/model"
@@ -47,25 +48,25 @@ func (s *CronScheduler) RemoveCronJob(id string) {
 }
 
 func Trigger(j model.Job) {
-	// fmt.Printf("%s - %d - %v\n", time.Now().Format(time.RubyDate), j.ID, j)
+	// logger.Info.Println("Triggered job: ", j.ID)
 	client := http.DefaultClient
 	var (
-		url        string
+		urlStr     string
 		bodyReader io.Reader
 	)
 
 	if j.WebhookMethod == "GET" {
 		// Insert body param in URL in case of GET method
-		url = fmt.Sprintf(`%s?body="%s"`, j.WebhookURL, j.Body)
+		urlStr = fmt.Sprintf(`%s?body=%s`, j.WebhookURL, url.QueryEscape(j.Body))
 		bodyReader = nil
 	} else {
 		// Form body in every other method
-		url = j.WebhookURL
+		urlStr = j.WebhookURL
 		jsonBody := fmt.Sprintf(`{"body":"%s"}`, j.Body) // JSON encoding "à pedreiro"
 		bodyReader = bytes.NewReader([]byte(jsonBody))
 	}
 
-	req, err := http.NewRequest(j.WebhookMethod, url, bodyReader)
+	req, err := http.NewRequest(j.WebhookMethod, urlStr, bodyReader)
 	if err != nil {
 		logger.Warn.Println("'Trigger': Creating request: ", err.Error(), j)
 		return

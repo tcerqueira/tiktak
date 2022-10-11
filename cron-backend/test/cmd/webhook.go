@@ -8,7 +8,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	logger "github.com/tcerqueira/tiktak/cron-backend/internal/logger"
 )
@@ -27,16 +26,17 @@ func init() {
 
 func main() {
 	router := mux.NewRouter()
-	credentials := handlers.AllowCredentials()
-	methods := handlers.AllowedMethods([]string{"*"})
-	origins := handlers.AllowedOrigins([]string{"*"})
+	// credentials := handlers.AllowCredentials()
+	// methods := handlers.AllowedMethods([]string{"*"})
+	// origins := handlers.AllowedOrigins([]string{"*"})
 	// Log requests
 	router.HandleFunc("/webhook", handleGet).Methods("GET")
 	router.HandleFunc("/webhook", handleOthers).Methods("POST", "PUT", "PATCH", "DELETE")
 
 	// Start server
 	logger.Info.Println("Starting server...")
-	log.Fatal(http.ListenAndServe(":"+sv_port, handlers.CORS(credentials, methods, origins)(router)))
+	// log.Fatal(http.ListenAndServe(":"+sv_port, handlers.CORS(credentials, methods, origins)(router)))
+	log.Fatal(http.ListenAndServe(":"+sv_port, router))
 }
 
 type RequestBody struct {

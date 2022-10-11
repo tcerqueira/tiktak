@@ -9,13 +9,13 @@ import (
 )
 
 func HandleCreateCron(cs *CronServer, event *pq.Notification) {
-	logger.Info.Println("Event 'Create': ", event.Extra)
 	var newJob model.Job
 	err := json.Unmarshal([]byte(event.Extra), &newJob)
 	if err != nil {
 		logger.Error.Println("'Handle create': ", err.Error(), event.Extra)
 		return
 	}
+	logger.Info.Println("Event 'Create': ", newJob.ID)
 	cs.AddCronJob(&newJob)
 }
 
