@@ -50,11 +50,11 @@ function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expres
 					<p className='mt-2'>{body}</p>
 				</div>
 				<div className='flex items-center space-x-5 self-start mt-3'>
-					<div className='cronjob__item--div' onClick={() => setEditOpen(e => !e)}>
+					<div className='cronjob__item--div' onClick={() => { setEditOpen(e => !e); setDeleteOpen(false); }}>
 						<PencilIcon className='cronjob__item--icon' />
 						<span className='hidden sm:inline'>Edit</span>
 					</div>
-					<div className='cronjob__item--div' onClick={() => setDeleteOpen(d => !d)}>
+					<div className='cronjob__item--div' onClick={() => { setDeleteOpen(d => !d); setEditOpen(false); }}>
 						<TrashIcon className='cronjob__item--icon' />
 						<span className='hidden sm:inline'>Delete</span>
 					</div>
@@ -75,7 +75,7 @@ function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expres
 						<label htmlFor='timezone-in'>Timezone</label>
 						<TimezoneSelect value={selectedTimezone} onChange={setSelectedTimezone} />
 					</div>
-					<button type='submit' className='submit-btn bg-blue-300 mt-4'>
+					<button type='submit' className='submit-btn bg-blue-200 mt-4'>
 						<ClockIcon className='h-10 w-10 text-orange-600' />
 					</button>
 				</form>
