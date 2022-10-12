@@ -2,17 +2,13 @@ module github.com/tcerqueira/tiktak/cron-backend/api
 
 go 1.19
 
-replace github.com/tcerqueira/tiktak/cron-backend/internal => ../internal
-
 require (
 	github.com/google/uuid v1.3.0
-	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
-	github.com/tcerqueira/tiktak/cron-backend/internal v0.0.0-00010101000000-000000000000
+	github.com/tcerqueira/tiktak/cron-backend/internal v0.0.0-20221011171805-8bf2709daed8
 )
 
 require (
-	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
