@@ -24,7 +24,7 @@ func (ww *JobWatchdog) Start() {
 				Scan(&orfanJobs)
 
 			if len(orfanJobs) > 0 {
-				result := db.Exec("DELETE FROM jobs WHERE jobs.id IN (SELECT jobs.id FROM jobs LEFT JOIN cron_jobs ON cron_jobs.job_id=jobs.id WHERE cron_jobs.job_id ISNULL)")
+				result := db.Exec("DELETE FROM jobs WHERE jobs.id IN (SELECT jobs.id FROM jobs LEFT JOIN cron_jobs ON cron_jobs.job_id=jobs.id WHERE cron_jobs.worker_id ISNULL)")
 				if result.Error != nil {
 					return result.Error
 				}
