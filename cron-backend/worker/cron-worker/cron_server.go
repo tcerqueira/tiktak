@@ -33,6 +33,7 @@ func NewServer() *CronServer {
 
 func (cs *CronServer) Start() {
 	var err error
+	cs.scheduler.Start()
 	cs.createListener, err = registerListener("create_" + cs.CronWorker.ID)
 	if err != nil {
 		panic(err.Error())
@@ -41,7 +42,6 @@ func (cs *CronServer) Start() {
 	if err != nil {
 		panic(err.Error())
 	}
-	cs.scheduler.Start()
 
 	var wg sync.WaitGroup
 	wg.Add(3)
