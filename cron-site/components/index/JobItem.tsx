@@ -45,8 +45,9 @@ function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expres
 		<div className='my-2 px-2 rounded-lg border-b-2 border-t-2 border-orange-500 '>
 			<div className='flex items-center justify-between'>
 				<div className='max-w-[78%]'>
-					<p><span className={`span-${webhook_method}`}>{webhook_method}</span> - {webhook_url}{webhook_method === 'GET' ? `?body=`: ''}</p>
+					<p className='break-words'><span className={`font-bold span-${webhook_method}`}>{webhook_method}</span> - {webhook_url}{webhook_method === 'GET' ? `?body=`: ''}</p>
 					<HR />
+					<span className='px-3 rounded-lg border-l-2 border-r-2 border-orange-500 text-orange-800 font-bold'>{cron_expression}</span>
 					<p className='mt-2'>{body}</p>
 				</div>
 				<div className='flex items-center space-x-5 self-start mt-3'>
@@ -95,8 +96,12 @@ function JobItem({ cronJob: { id, webhook_url, webhook_method, body, cron_expres
 
 export default JobItem
 
-const HR = () => {
+interface HRProps {
+	className?: string;
+}
+
+const HR = ({ className }: HRProps) => {
 	return (
-		<hr className='border-orange-300'/>
+		<hr className={'border-orange-300'}/>
 	);
 }

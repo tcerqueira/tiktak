@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -44,7 +46,7 @@
     }
 
     .submit-btn {
-        @apply flex justify-center items-center md:w-[60%] w-[100%] border-2 border-transparent rounded-lg self-center cursor-pointer hover:border-orange-500
+        @apply flex justify-center items-center sm:w-[70%] w-[100%] border-2 border-transparent rounded-lg self-center cursor-pointer hover:border-orange-500
     }
 }
 
@@ -62,10 +64,16 @@
     }
 
     .span-PATCH {
-        @apply text-orange-700
+        @apply text-orange-600
     }
 
     .span-DELETE {
         @apply text-red-700
+    }
+}
+
+@layer base {
+    html {
+        font-family: 'Roboto Mono', monospace;
     }
 }

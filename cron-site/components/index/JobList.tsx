@@ -31,7 +31,7 @@ function JobList({ cronList, isLoading, error, fetchList }: JobListProps) {
 
 	return (
 		<div>
-			<h1 className='text-center'>{error ? error : isLoading ? "Loading..." : "CRONS"}</h1>
+			<h1 className='text-center font-bold'>{error ? error : isLoading ? "Loading..." : "CRONS"}</h1>
 			{!cronList.length && <p>No CRON jobs...</p>}
 			<ul>
 				{!isLoading && cronList?.map((item) => (

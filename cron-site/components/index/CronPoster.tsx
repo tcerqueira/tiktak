@@ -44,7 +44,7 @@ function CronPoster({ onPost }: CronPosterProps) {
 
 	return (
 		<div className='p-2 rounded-md border-2 border-orange-500'>
-			<h1>Create a CRON job!</h1>
+			<h1 className='font-semibold'>Create a CRON job!</h1>
 			<form className='flex flex-col' onSubmit={handleSubmit(onSubmit)}>
 				<div className='webhook-container'>
 					<div className='input-container md:grow'>
